@@ -1,0 +1,33 @@
+---
+socks_loglevel: "DEBUG1"
+socks_serveraliveinterval: 60
+socks_serveralivecountmax: 3
+socks_port: 1080
+socks_system_user: "ssh-tunnel"
+socks_system_group: "ssh-tunnel"
+socks_src_ip: []
+socks_end: 1
+socks_caddy_generate_html_output: false
+socks_caddy_webserver_path: /var/www/
+socks_caddy_user: caddy
+socks_caddy_group: caddy
+# Configure single Consul service
+consul_service_config:
+  - id: "socks_{{ ansible_hostname }}.{{ ansible_domain }}"
+    name: "monitoring-blackbox_exporter"
+    port: "{{ socks_port }}"
+    address: "{{ ansible_hostname }}.{{ ansible_domain }}"
+    meta:
+      __param_module: "tcp_connect"
+      __scheme__: "http"
+      __metrics_path__: "/probe"
+      environment: "{{ ansible_environment }}"
+      product: "{{ ansible_product }}"
+      owner_email: "{{ ansible_contact_mail }}"
+      owner_jira: "{{ ansible_contact_jira }}"
+      alert_scc: "{{ ansible_alert_scc | string | lower }}"
+    check:
+      args: ["nc","-w1","-z","{{ ansible_hostname }}.{{ ansible_domain }}","{{ socks_port | string }}"]
+      interval: "60s"
+      timeout: "10s"
+    tags: ["prometheus","metrics","endpoint"]

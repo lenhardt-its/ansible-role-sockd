@@ -1,0 +1,127 @@
+---
+- name: create system group
+  group:
+    name: "{{ socks_system_group }}"
+    system: true
+    state: present
+  when: socks_system_group != "root"
+  become: true
+  tags: socks
+
+- name: create system user
+  user:
+    name: "{{ socks_system_user }}"
+    system: true
+    shell: "/sbin/nologin"
+    group: "{{ socks_system_group }}"
+    home: "/home/{{ socks_system_user }}"
+  when: socks_system_user != "root"
+  become: true
+  tags: socks
+
+- name: create .ssh
+  file:
+    path: "/home/{{ socks_system_user }}/.ssh/"
+    state: directory
+    owner: "{{ socks_system_user }}"
+    group: "{{ socks_system_group }}"
+    mode: 0700
+  become: true
+  tags: socks
+
+- name: copy template files
+  template:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  notify: restart sshsocks
+  with_items:
+    - source: id_rsa.pub
+      destination: "/home/{{ socks_system_user }}/.ssh/id_rsa.pub"
+      owner: "{{ socks_system_user }}"
+      group: "{{ socks_system_group }}"
+      mode: "0600"
+    - source: id_rsa
+      destination: "/home/{{ socks_system_user }}/.ssh/id_rsa"
+      owner: "{{ socks_system_user }}"
+      group: "{{ socks_system_group }}"
+      mode: "0600"
+    - source: sshsocks.service.j2
+      destination: "/etc/systemd/system/sshsocks.service"
+      owner: "root"
+      group: "root"
+      mode: "0644"
+    - source: sudoers.j2
+      destination: "/etc/sudoers.d/user-{{ socks_system_user }}"
+      owner: "root"
+      group: "root"
+      mode: "0644"
+  become: true
+  tags: socks
+
+- name: copy key file
+  copy:
+    src: "{{ role_path }}/files/{{ item }}"
+    dest: "/home/{{ socks_system_user }}/.ssh/{{ item }}"
+    owner: root
+    group: root
+  with_items:
+    - id_rsa
+    - id_rsa.pub
+
+- name: copy iptables.sh
+  template:
+    src: iptables.sh
+    dest: "/home/{{ socks_system_user }}/iptables.sh"
+    owner: "{{ socks_system_user }}"
+    group: "{{ socks_system_group }}"
+    mode: 0755
+  notify: restart sshsocks
+  become: true
+  tags:
+    - socks
+    - socks_acls
+
+- name: set authorized key took from file
+  authorized_key:
+    user: "{{ socks_system_user }}"
+    state: present
+    key: "{{ lookup('file', '{{ role_path }}/files/id_rsa.pub') }}"
+
+- name: start and enable socks
+  systemd:
+    daemon_reload: true
+    name: sshsocks
+    enabled: true
+    state: started
+  become: true
+  tags: socks
+
+- name: caddy - generate html file
+  template:
+    src: caddy_socks.html.j2
+    dest: "{{ socks_caddy_webserver_path }}/socks.html"
+    owner: "{{ socks_caddy_user }}"
+    group: "{{ socks_caddy_group }}"
+    mode: 0644
+  when: socks_caddy_generate_html_output
+  become: true
+  tags:
+    - socks
+    - socks_acls
+
+- name: configure consul services
+  template:
+    src: consul.service.json.j2
+    dest: "/etc/consul.d/{{ item.id }}.json"
+    owner: consul
+    group: consul
+    mode: 0644
+  with_items: "{{ consul_service_config }}"
+  notify: reload consul
+  become: true
+  tags:
+    - socks
+    - consul

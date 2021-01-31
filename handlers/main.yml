@@ -1,0 +1,16 @@
+---
+- name: restart sshsocks
+  systemd:
+    name: sshsocks
+    state: restarted
+  become: true
+  tags: sshsocks
+
+- name: reload consul
+  systemd:
+    name: consul
+    state: reloaded
+  become: true
+  tags:
+    - socks
+    - consul

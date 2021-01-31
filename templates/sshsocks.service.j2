@@ -1,0 +1,18 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=SSH Socks Server
+ConditionFileNotEmpty=/home/ssh-tunnel/.ssh/id_rsa
+After=network.target
+
+[Service]
+User=ssh-tunnel
+Group=ssh-tunnel
+# LogLevel=DEBUG1 to get the connection forwards logged
+ExecStartPre=/usr/bin/sudo /home/{{ socks_system_user }}/iptables.sh start
+ExecStart=/usr/bin/ssh -N -o LogLevel={{ socks_loglevel }} -o ServerAliveInterval={{ socks_serveraliveinterval }} -o ServerAliveCountMax={{ socks_serveralivecountmax }} -p 22 -l {{ socks_system_user }} -D0.0.0.0:{{ socks_port }} -i /home/{{ socks_system_user }}/.ssh/id_rsa localhost
+ExecStopPost=/usr/bin/sudo /home/{{ socks_system_user }}/iptables.sh stop
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Socks config for {{ ansible_squid_vip }}</title>
+    <style>
+       /* Define custom styles to include with class="" */
+       .logo    { width: 400px; padding-left: 10px }
+       .line    { border-bottom: 1px solid black; position: absolute; }
+       .p-head  { padding-left: 0px; padding-right: 0px; font-size: 16px }
+       /* Define attribute default styles */
+       body     { background-color: white; text-align: left; color: black; font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; }
+       header   { padding-bottom: 5px; padding-top: 10px; padding-left: 10px; background-color: #aa8c41; }
+       article  { padding-left: 10px; padding-right: 0px; }
+       footer   { padding-left: 10px; padding-right: 0px; }
+       p        { padding-left: 0px; padding-right: 0px; font-size: 12px }
+       hr       { margin-left: 0px; margin-right: 0px; border-collapse: collapse; border: 1px solid #999; }
+       code     { background-color: #eee; font-size: 16px; font-family: monospace; display: block; text-align: left; border: 1px solid #999; padding: 5px;}
+       /* Define link styles */
+       /* unvisited link */
+       a:link    { color: #aa8c41; text-decoration: none;}
+       /* visited link */
+       a:visited { color: #aa8c41; text-decoration: none;}
+       /* mouse over link */
+       a:hover   { color: black; text-decoration: underline;}
+       /* selected link */
+       a:active  { color: blue; text-decoration: underline;}
+    </style>
+</head>
+<body >
+  <!-- Define header content -->
+  <header>
+    <h2>Socks config for {{ ansible_squid_vip }}</h2>
+  </header>
+  <!-- Define article (main) content -->
+  <article>
+      <p class="p-head"><b># Defined Socks Access over IpTables</b></p>
+{% if socks_src_ip | length > 0 %}
+{%   for address in socks_src_ip %}
+<p>{{ address.ip }} # {{ address.name }}</p>
+{%   endfor %}
+{% endif %}
+  </article>
+  <!-- Define footer content -->
+  <footer>
+    <hr />
+    <h6>&copy; | <a href="mailto:{{ ansible_squid_cache_mgr }}">{{ ansible_squid_cache_mgr }}</a> | Proxy: {{ ansible_squid_vip }}</h6>
+  </footer>
+</body>
+</html>
