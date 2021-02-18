@@ -8,6 +8,8 @@ Install and configure an Dante Socks Proxy on CentOS/RHEL systems using ansible.
   * [Dante Client](http://rpm.pbone.net/info_idpl_54818349_distro_centos7_com_dante-1.4.2-1.21.x86_64.rpm.html)
   * [Dante Server](http://rpm.pbone.net/info_idpl_54818351_distro_centos_7_com_dante-server-1.4.2-1.21.x86_64.rpm.html)
 
+Only in destination ip is the subnetmask required. Not in source.
+
 ## Requirements
 
 - Ansible >= 2.5 (It might work on previous versions, but we cannot guarantee it)
