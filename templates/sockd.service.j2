@@ -10,7 +10,7 @@ Description=Sockd Service
 Type=simple
 User={{ sockd_user }}
 Group={{ sockd_group }}
-ExecStart={{ sockd_binary_install_dir }}/sockd -f {{ sockd_config }}
+ExecStart={{ sockd_binary_install_dir }}/sockd -f {{ sockd_config }} -N {{ sockd_workers }}
 Restart=on-failure
 RestartSec=10
 

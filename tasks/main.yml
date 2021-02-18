@@ -1,4 +1,16 @@
 ---
+- name: gather operating system variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution_file_variety | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_version.split('.')[0] }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+  tags: sockd
+
 - name: create system group
   group:
     name: "{{ sockd_group }}"
@@ -25,19 +37,15 @@
     mode: 0755
   tags: sockd
 
-- name: generate config files
-  template:
-    src: "sockd.conf.j2"
-    dest: "/etc/sockd.conf"
+- name: generate log folder
+  file:
+    path: "{{ sokcd_log_folder }}"
     owner: "{{ sockd_user }}"
     group: "{{ sockd_group }}"
-    mode: 0640
-  notify: restart sshsocks
-  tags: 
-    - sockd
-    - sockd_acls
+    mode: 0755
+  tags: sockd
 
-- name: generate config files
+- name: generate systemd file
   template:
     src: "sockd.conf.j2"
     dest: "{{ sockd_config }}"
@@ -94,3 +102,53 @@
   tags:
     - sockd
     - consul
+
+- name: install selinux dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  environment: "{{ proxy_env }}"
+  with_items: "{{ sockd_selinux_packages }}"
+  register: _install_packages
+  until: _install_packages is succeeded
+  retries: 5
+  delay: 2
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_version.full is version_compare('2.4', '>=')
+    - ansible_selinux.status == "enabled"
+  become: true
+  tags: sockd
+
+- name: allow binding to port in selinux
+  seport:
+    ports: "{{ sockd_port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_version.full is version_compare('2.4', '>=')
+    - ansible_selinux.status == "enabled"
+  become: true
+  tags: sockd
+
+- name: allow access to port on firewalld
+  firewalld:
+    port: "{{ sockd_port }}/tcp"
+    permanent: yes
+    state: true
+  when: 
+    - ansible_os_family == 'RedHat'
+    - sockd_firewalld_state == "enabled"
+  register: "_firewalld_sockd_state"
+  tags: sockd
+
+- name: reload firewalld service
+  service:
+    name: firewalld
+    state: reloaded
+  when: 
+    - ansible_os_family == 'RedHat'
+    - _firewalld_sockd_state['changed']
+  tags: sockd

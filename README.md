@@ -30,6 +30,7 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `sockd_config` | "/etc/sockd.conf" | Default config pat |
 | `sockd_vip` | "{{ ansible_hostname }}.{{ ansible_domain }}" | Default virtual (ip) service name for html config |
 | `socks_contact_mail` | "my@mail.com" | Default email-address for html config |
+| `sockd_firewalld_state` | disabled | Configure Firewalld |
 | `sockd_access_rules` | {} | Default access rules (see below) |
 | `sockd_caddy_generate_html_output` | false | Generate HTML Output [ansible-role-caddyserver](https://github.com/OnkelDom/ansible-role-caddyserver) required |
 | `sockd_caddy_webserver_path` | /var/www/ | Default Caddy webserver path |
@@ -37,7 +38,6 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `sockd_caddy_group` | caddy | Default Caddy group |
 | `sockd_consul_service_register` | false | Generate Consul service snipped |
 | `consul_service_config` | [defaults/main.yml](defaults/main.yml) | Generate Consul service [ansible-role-consul](https://github.com/OnkelDom/ansible-role-consul) required  |
-
 
 ## Example
 

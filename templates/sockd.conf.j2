@@ -1,6 +1,7 @@
 {{ ansible_managed | comment }}
 #logging
-logoutput: stderr
+logoutput: syslog stdout {{ sockd_log_folder }}/access.log
+# logoutput: syslog stderr {{ sockd_log_folder }}/access.log
 {% if sockd_debug | length > 0 %}
 debug: {{ sockd_debug }}
 {% endif %}
@@ -8,7 +9,7 @@ debug: {{ sockd_debug }}
 #server address specification
 internal: {{ sockd_bind_ip }} port = {{ sockd_bind_port }}
 # or IPv6
-{% if sockd_bind_ipv6 %}internal: {{ sockd_bind_ipv6 }} port = {{ sockd_bind_port_ipv6 }}{% endif %}
+{% if sockd_bind_ipv6_enabled %}internal: {{ sockd_bind_ipv6 }} port = {{ sockd_bind_port_ipv6 }}{% endif %}
 external: {{ sockd_bind_interface }}
 
 #server identities (not needed on solaris)
