@@ -36,7 +36,7 @@ consul_service_config:
       __scheme__: "http"
       __metrics_path__: "/probe"
     check:
-      args: ["nc","-w1","-z","{{ ansible_hostname }}.{{ ansible_domain }}","{{ sockd_port | string }}"]
+      args: ["nc", "-w1", "-z", "{{ ansible_hostname }}.{{ ansible_domain }}", "{{ sockd_port | string }}"]
       interval: "60s"
       timeout: "10s"
-    tags: ["prometheus","metrics","endpoint"]
+    tags: ["prometheus", "metrics", "endpoint"]
