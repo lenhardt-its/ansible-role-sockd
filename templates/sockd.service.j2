@@ -1,16 +1,17 @@
 {{ ansible_managed | comment }}
 [Install]
 WantedBy=multi-user.target
-After=network-online.target
+After=network.target
 
 [Unit]
 Description=Sockd Service
 
 [Service]
-Type=simple
+Type=forking
 User={{ sockd_user }}
 Group={{ sockd_group }}
-ExecStart={{ sockd_binary_install_dir }}/sockd -f {{ sockd_config }} -N {{ sockd_workers }}
+PIDFile=/var/run/sockd/sockd.pid
+ExecStart={{ sockd_binary_install_dir }}/sockd -D -f {{ sockd_config }} -N {{ sockd_workers }} -p /var/run/sockd/sockd.pid
 Restart=on-failure
 RestartSec=10
 

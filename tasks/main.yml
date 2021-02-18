@@ -28,13 +28,25 @@
   when: sockd_user != "root"
   tags: sockd
 
-- name: copy binary file
+- name: copy rpm files
   copy:
-    src: "{{ role_path }}/files/sockd"
-    dest: "{{ sockd_binary_install_dir }}/sockd"
+    src: "{{ role_path }}/files/{{ item }}"
+    dest: "/tmp/"
     owner: root
     group: root
     mode: 0755
+  with_items:
+    - dante-1.4.2-1.21.x86_64.rpm
+    - dante-server-1.4.2-1.21.x86_64.rpm
+  tags: sockd
+
+- name: install client and server package
+  yum:
+    name: "/tmp/{{ item }}"
+    state: present
+  with_items:
+    - dante-1.4.2-1.21.x86_64.rpm
+    - dante-server-1.4.2-1.21.x86_64.rpm
   tags: sockd
 
 - name: generate log folder
@@ -45,7 +57,7 @@
     mode: 0755
   tags: sockd
 
-- name: generate systemd file
+- name: generate config file
   template:
     src: "sockd.conf.j2"
     dest: "{{ sockd_config }}"
@@ -60,7 +72,7 @@
 - name: copy systemd service unit
   template:
     src: sockd.service.j2
-    dest: /etc/systemd/system/sockd.service
+    dest: "/usr/lib/systemd/system/sockd.service"
     owner: root
     group: root
     mode: 0644
