@@ -5,46 +5,34 @@ logoutput: syslog stdout {{ sockd_log_folder }}/access.log
 {% if sockd_debug | length > 0 %}
 debug: {{ sockd_debug }}
 {% endif %}
-
 #server address specification
 internal: {{ sockd_bind_ip }} port = {{ sockd_bind_port }}
 # or IPv6
 {% if sockd_bind_ipv6_enabled %}internal: {{ sockd_bind_ipv6 }} port = {{ sockd_bind_port_ipv6 }}{% endif %}
-external: {{ sockd_bind_interface }}
-
+external: {{ sockd_bind_external_interface }}
 #server identities (not needed on solaris)
 user.privileged: root
 user.notprivileged: {{ sockd_user }}
-
 #reverse dns lookup
 #srchost: nodnsmismatch
-
 #authentication methods
 clientmethod: none
 socksmethod: none
 
+#
+# Defined access rules
+#
 {% if sockd_access_rules is defined %}
 {%  for address in sockd_access_rules %}
 {{ address.name | comment }}
 {%   for src in address.src %}
-client {{ adress.access | default('pass') }} {
-    from: {{ src }}/32 port 1-65535 to: 0.0.0.0/0
-    {{ address.log | default("log: connect error")}}
-}
+client {{ adress.access | default('pass') }} { from: {{ src }}/32 port 1-65535 to: 0.0.0.0/0 {{ address.log | default("log: connect error")}} }
 {% if address.dst is defined %}
 {%   for value in address.dst %}
-socks {{ adress.access | default('pass') }} {
-    from: {{ src }}/32 to: {{ value }}
-    socksmethod: none
-    {{ address.log | default("log: connect error")}}
-}
+socks {{ adress.access | default('pass') }} { from: {{ src }}/32 to: {{ value }} socksmethod: none {{ address.log | default("log: connect error")}} }
 {%   endfor %}
 {%   else %}
-socks {{ adress.access | default('pass') }} {
-    from: {{ src }}/32 to: 0.0.0.0/0
-    socksmethod: none
-    {{ address.log | default("log: connect error")}}
-}
+socks {{ adress.access | default('pass') }} { from: {{ src }}/32 to: 0.0.0.0/0 socksmethod: none {{ address.log | default("log: connect error")}} }
 {% endif %}
 
 {%   endfor %}

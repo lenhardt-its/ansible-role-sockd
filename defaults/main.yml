@@ -4,7 +4,7 @@ sockd_group: sockd
 sockd_bind_ip: "{{ ansible_default_ipv4.address }}"
 #sockd_bind_ip: "0.0.0.0"
 sockd_bind_port: 1080
-sockd_bind_interface: "{{ ansible_default_ipv4 }}"
+sockd_bind_external_interface: "{{ ansible_default_ipv4 }}"
 sockd_debug: ""
 sockd_bind_ipv6_enabled: false
 sockd_bind_ipv6: "{{ ansible_default_ipv6.address | default('') }}"

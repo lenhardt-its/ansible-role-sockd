@@ -22,7 +22,7 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `sockd_group` | sockd | Run group |
 | `sockd_bind_ip` | "{{ ansible_default_ipv4.address }}" | Default bind IP |
 | `sockd_bind_port` | 1080 | Default bind Port |
-| `sockd_bind_interface` | "{{ ansible_default_ipv4 }}" | Default bind Interface |
+| `sockd_bind_external_interface` | "{{ ansible_default_ipv4 }}" | Default bind Interface |
 | `sockd_debug` | "" | Debug mode |
 | `sockd_bind_ipv6_enabled` | false | Enable/Disable ipv6 |
 | `sockd_bind_ipv6` | "{{ ansible_default_ipv6.address | default('') }}" | Default ipv6 bind IP |
