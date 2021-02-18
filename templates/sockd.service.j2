@@ -1,0 +1,18 @@
+{{ ansible_managed | comment }}
+[Install]
+WantedBy=multi-user.target
+After=network-online.target
+
+[Unit]
+Description=Sockd Service
+
+[Service]
+Type=simple
+User={{ sockd_user }}
+Group={{ sockd_group }}
+ExecStart={{ sockd_binary_install_dir }}/sockd -f {{ sockd_config }}
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

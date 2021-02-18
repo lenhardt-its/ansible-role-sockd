@@ -1,33 +1,39 @@
 ---
-socks_loglevel: "DEBUG1"
-socks_serveraliveinterval: 60
-socks_serveralivecountmax: 3
-socks_port: 1080
-socks_system_user: "ssh-tunnel"
-socks_system_group: "ssh-tunnel"
-socks_src_ip: []
-socks_end: 1
-socks_caddy_generate_html_output: false
-socks_caddy_webserver_path: /var/www/
-socks_caddy_user: caddy
-socks_caddy_group: caddy
+sockd_user: sockd
+sockd_group: sockd
+sockd_bind_ip: "{{ ansible_default_ipv4.address }}"
+#sockd_bind_ip: "0.0.0.0"
+sockd_bind_port: 1080
+sockd_bind_interface: "{{ ansible_default_ipv4 }}"
+sockd_debug: ""
+sockd_bind_ipv6_enabled: false
+sockd_bind_ipv6: "{{ ansible_default_ipv6.address | default('') }}"
+sockd_bind_port_ipv6: 1080
+sockd_binary_install_dir: "/usr/local/bin"
+sockd_config: "/etc/sockd.conf"
+sockd_vip: "{{ ansible_hostname }}.{{ ansible_domain }}"
+socks_contact_mail: "my@mail.com"
+sockd_access_rules: {}
+
+# Generate config as html file
+sockd_caddy_generate_html_output: false
+sockd_caddy_webserver_path: /var/www/
+sockd_caddy_user: caddy
+sockd_caddy_group: caddy
+
 # Configure single Consul service
+sockd_consul_service_register: false
 consul_service_config:
-  - id: "socks_{{ ansible_hostname }}.{{ ansible_domain }}"
+  - id: "sockd_{{ ansible_hostname }}.{{ ansible_domain }}"
     name: "monitoring-blackbox_exporter"
-    port: "{{ socks_port }}"
+    port: "{{ sockd_port }}"
     address: "{{ ansible_hostname }}.{{ ansible_domain }}"
     meta:
       __param_module: "tcp_connect"
       __scheme__: "http"
       __metrics_path__: "/probe"
-      environment: "{{ ansible_environment }}"
-      product: "{{ ansible_product }}"
-      owner_email: "{{ ansible_contact_mail }}"
-      owner_jira: "{{ ansible_contact_jira }}"
-      alert_scc: "{{ ansible_alert_scc | string | lower }}"
     check:
-      args: ["nc","-w1","-z","{{ ansible_hostname }}.{{ ansible_domain }}","{{ socks_port | string }}"]
+      args: ["nc","-w1","-z","{{ ansible_hostname }}.{{ ansible_domain }}","{{ sockd_port | string }}"]
       interval: "60s"
       timeout: "10s"
     tags: ["prometheus","metrics","endpoint"]

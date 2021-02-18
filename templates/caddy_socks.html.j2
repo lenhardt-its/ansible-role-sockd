@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Socks config for {{ ansible_squid_vip }}</title>
+    <title>Socks config for {{ socks_vip }}</title>
     <style>
        /* Define custom styles to include with class="" */
        .logo    { width: 400px; padding-left: 10px }
@@ -16,6 +16,10 @@
        p        { padding-left: 0px; padding-right: 0px; font-size: 12px }
        hr       { margin-left: 0px; margin-right: 0px; border-collapse: collapse; border: 1px solid #999; }
        code     { background-color: #eee; font-size: 16px; font-family: monospace; display: block; text-align: left; border: 1px solid #999; padding: 5px;}
+       table    { font-size: 16px; font-family: monospace; border: 1px solid #999; border-collapse: collapse; border-style: dotted; }
+       th       { padding-left: 3px; padding-right: 3px; border: 1px solid #999; border-collapse: collapse; border-style: dotted; }
+       td       { padding-left: 3px; padding-right: 3px; border: 1px solid #999; border-collapse: collapse; border-style: dotted; }
+       tr       { padding-left: 3px; padding-right: 3px; border: 1px solid #999; border-collapse: collapse; border-style: dotted; }
        /* Define link styles */
        /* unvisited link */
        a:link    { color: #aa8c41; text-decoration: none;}
@@ -30,21 +34,50 @@
 <body >
   <!-- Define header content -->
   <header>
-    <h2>Socks config for {{ ansible_squid_vip }}</h2>
+    <h2>Socks config for {{ socks_vip }}</h2>
   </header>
   <!-- Define article (main) content -->
   <article>
-      <p class="p-head"><b># Defined Socks Access over IpTables</b></p>
-{% if socks_src_ip | length > 0 %}
-{%   for address in socks_src_ip %}
-<p>{{ address.ip }} # {{ address.name }}</p>
+      <p class="p-head"><b># Defined Socks Access Rules</b></p>
+{% if sockd_access_rules is defined %}
+        <table border="1">
+          <tr>
+            <th><b>Source IP</b></th>
+            <th><b>Access</b></th>
+            <th><b>Destination IP/Domain</b></th>
+            <th><b>Comment</b></th>
+          </tr>
+{%  for address in sockd_access_rules %}
+{%   for src in address.src %}
+{%    if address.dst is defined %}
+{%     for value in address.dst %}
+          <tr>
+            <td>{{ src}}</td>
+            <td>{{ adress.access | default('pass') }}</td>
+            <td>{{ value }}</td>
+            <td>{{ address.name }}</td>
+          </tr>
+{%     endfor %}
+{%     else %}
+          <tr>
+            <td>{{ src}}</td>
+            <td>{{ adress.access | default('pass') }}</td>
+            <td>0.0.0.0/0</td>
+            <td>Any - {{ address.name }}</td>
+          </tr>
+{%    endif %}
 {%   endfor %}
+{%  endfor %}
+        </table>
 {% endif %}
   </article>
   <!-- Define footer content -->
   <footer>
     <hr />
-    <h6>&copy; | <a href="mailto:{{ ansible_squid_cache_mgr }}">{{ ansible_squid_cache_mgr }}</a> | Proxy: {{ ansible_squid_vip }}</h6>
+    <h6>&copy; | <a href="mailto:{{ socks_contact_mail }}">{{ socks_contact_mail }}</a> | Proxy: {{ socks_vip }}</h6>
   </footer>
 </body>
 </html>
+
+    
+
