@@ -50,7 +50,10 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
   - ansible-role-socks
   vars:
     sockd_access_rules:
-      - name: "Test1"
+      - name: "Allow any dst"
+        src:
+          - 10.100.0.2 # boss01.loca.lan
+      - name: "Empty Logging for this"
         log: "" # with this, logging is disabled
         src:
           - 10.100.0.101 # test01.loca.lan
