@@ -9,7 +9,7 @@ galaxy_info:
     versions:
     - 7
     - 8
-  categories:
+  galaxy_tags:
   - system
   - network
 dependencies: []
