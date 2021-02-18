@@ -27,6 +27,7 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `sockd_bind_ipv6` | "{{ ansible_default_ipv6.address | default('') }}" | Default ipv6 bind IP |
 | `sockd_bind_port_ipv6` | 1080 | Default ipv6 bind Port |
 | `sockd_binary_install_dir` | "/usr/local/bin" | Default binary installation dir |
+| `sokcd_log_folder` | "/var/log/sockd"` | Default log dir |
 | `sockd_config` | "/etc/sockd.conf" | Default config pat |
 | `sockd_vip` | "{{ ansible_hostname }}.{{ ansible_domain }}" | Default virtual (ip) service name for html config |
 | `socks_contact_mail` | "my@mail.com" | Default email-address for html config |
