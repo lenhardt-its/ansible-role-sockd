@@ -4,7 +4,7 @@
 
 Install and configure an Dante Socks Proxy on CentOS/RHEL systems using ansible.
 
-* The binary file is from [Koss822](https://github.com/koss822/misc/tree/master/Linux/Projects/dante_socks)
+* The binary file is from [Koss822](https://github.com/koss822/misc/tree/master/Linux/Projects/dante_socks) v1.4.3
 * Inspired by [Martin's Blog](https://www.enigma14.eu/martin/blog/2018/02/01/dante-socks-proxy-how-to-install-and-manage-on-rhel-or-other-distros/)
 
 ## Requirements
