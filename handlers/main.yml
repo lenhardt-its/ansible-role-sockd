@@ -3,14 +3,18 @@
   systemd:
     name: sockd
     state: restarted
-  become: true
   tags: sockd
 
 - name: reload consul
   systemd:
     name: consul
     state: reloaded
-  become: true
   tags:
     - sockd
     - consul
+
+- name: reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+  tags: sockd

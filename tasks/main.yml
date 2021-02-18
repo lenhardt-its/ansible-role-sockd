@@ -83,7 +83,6 @@
     group: "{{ sockd_caddy_group }}"
     mode: 0644
   when: sockd_caddy_generate_html_output
-  become: true
   tags:
     - sockd
     - sockd_acls
@@ -98,7 +97,6 @@
   with_items: "{{ consul_service_config }}"
   when: sockd_consul_service_register
   notify: reload consul
-  become: true
   tags:
     - sockd
     - consul
@@ -117,7 +115,6 @@
     - ansible_os_family == 'RedHat'
     - ansible_version.full is version_compare('2.4', '>=')
     - ansible_selinux.status == "enabled"
-  become: true
   tags: sockd
 
 - name: allow binding to port in selinux
@@ -130,7 +127,6 @@
     - ansible_os_family == 'RedHat'
     - ansible_version.full is version_compare('2.4', '>=')
     - ansible_selinux.status == "enabled"
-  become: true
   tags: sockd
 
 - name: allow access to port on firewalld
@@ -141,14 +137,5 @@
   when: 
     - ansible_os_family == 'RedHat'
     - sockd_firewalld_state == "enabled"
-  register: "_firewalld_sockd_state"
-  tags: sockd
-
-- name: reload firewalld service
-  service:
-    name: firewalld
-    state: reloaded
-  when: 
-    - ansible_os_family == 'RedHat'
-    - _firewalld_sockd_state['changed']
+  notify: reload firewalld
   tags: sockd
