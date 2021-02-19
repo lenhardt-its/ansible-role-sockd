@@ -7,8 +7,10 @@ debug: {{ sockd_debug }}
 {% endif %}
 #server address specification
 internal: {{ sockd_bind_ip }} port = {{ sockd_bind_port }}
+{% if sockd_bind_ipv6_enabled %}
 # or IPv6
-{% if sockd_bind_ipv6_enabled %}internal: {{ sockd_bind_ipv6 }} port = {{ sockd_bind_port_ipv6 }}{% endif %}
+internal: {{ sockd_bind_ipv6 }} port = {{ sockd_bind_port_ipv6 }}
+{% endif %}
 external: {{ sockd_bind_external_interface }}
 #server identities (not needed on solaris)
 user.privileged: root
