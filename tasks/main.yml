@@ -65,12 +65,21 @@
     src: "sockd.conf.j2"
     dest: "{{ sockd_config }}"
     owner: "{{ sockd_user }}"
-    group: "{{ sockd_group }}"
-    mode: 0640
-  notify: restart sockd
-  tags: 
+    group: "{{ sockd_group }}"                                                                                                                                                                                                                                               mode: 0640
+  notify: reload sockd
+  tags:
     - sockd
     - sockd_acls
+
+- name: generate logrotate file
+  template:
+    src: "sockd_logrotate.conf.j2"
+    dest: "/etc/logrotate.d/sockd"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  tags:
+    - sockd
 
 - name: copy systemd service unit
   template:
