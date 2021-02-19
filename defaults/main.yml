@@ -12,6 +12,7 @@ sockd_bind_port_ipv6: 1080
 sockd_log_folder: "/var/log/sockd"
 sockd_pid_folder: "/var/run/sockd"
 sockd_config: "/etc/sockd.conf"
+sockd_logrotate_days: 28
 sockd_workers: 8
 sockd_vip: "{{ ansible_hostname }}.{{ ansible_domain }}"
 sockd_contact_mail: "my@mail.com"
