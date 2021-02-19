@@ -2,6 +2,7 @@
 [Unit]
 Description=Sockd Service
 After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=forking
