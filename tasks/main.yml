@@ -65,7 +65,8 @@
     src: "sockd.conf.j2"
     dest: "{{ sockd_config }}"
     owner: "{{ sockd_user }}"
-    group: "{{ sockd_group }}"                                                                                                                                                                                                                                               mode: 0640
+    group: "{{ sockd_group }}"
+    mode: 0640
   notify: reload sockd
   tags:
     - sockd
@@ -101,7 +102,7 @@
 
 - name: caddy html config
   template:
-    src: caddy_socks.html.j2
+    src: caddy_sockd.html.j2
     dest: "{{ sockd_caddy_webserver_path }}/socks.html"
     owner: "{{ sockd_caddy_user }}"
     group: "{{ sockd_caddy_group }}"
