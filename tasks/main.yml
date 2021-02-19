@@ -42,11 +42,10 @@
 
 - name: install client and server package
   yum:
-    name: "/tmp/{{ item }}"
+    name:
+      - "/tmp/dante-1.4.2-1.21.x86_64.rpm"
+      - "/tmp/dante-server-1.4.2-1.21.x86_64.rpm"
     state: present
-  with_items:
-    - dante-1.4.2-1.21.x86_64.rpm
-    - dante-server-1.4.2-1.21.x86_64.rpm
   tags: sockd
 
 - name: generate log folder
@@ -55,6 +54,7 @@
     owner: "{{ sockd_user }}"
     group: "{{ sockd_group }}"
     mode: 0755
+    state: directory
   tags: sockd
 
 - name: generate config file
