@@ -56,8 +56,8 @@
     mode: 0755
     state: directory
   with_items:
-    - "{{ sokcd_log_folder }}"
-    - "{{ sokcd_pid_folder }}"
+    - "{{ sockd_log_folder }}"
+    - "{{ sockd_pid_folder }}"
   tags: sockd
 
 - name: generate config file
