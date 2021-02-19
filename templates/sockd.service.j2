@@ -10,8 +10,8 @@ Description=Sockd Service
 Type=forking
 User={{ sockd_user }}
 Group={{ sockd_group }}
-PIDFile=/var/run/sockd/sockd.pid
-ExecStart=/usr/sbin/sockd -D -f {{ sockd_config }} -N {{ sockd_workers }} -p /var/run/sockd/sockd.pid
+PIDFile={{ sockd_pid_folder }}/sockd.pid
+ExecStart=/usr/sbin/sockd -D -f {{ sockd_config }} -N {{ sockd_workers }} -p {{ sockd_pid_folder }}/sockd.pid
 Restart=on-failure
 RestartSec=10
 
