@@ -1,8 +1,15 @@
 ---
 - name: restart sockd
   systemd:
+    daemon_reload: true
     name: sockd
     state: restarted
+  tags: sockd
+  
+- name: reload sockd
+  systemd:
+    name: sockd
+    state: reloaded
   tags: sockd
 
 - name: reload consul
