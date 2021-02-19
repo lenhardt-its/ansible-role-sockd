@@ -9,7 +9,6 @@ sockd_debug: ""
 sockd_bind_ipv6_enabled: false
 sockd_bind_ipv6: "{{ ansible_default_ipv6.address | default('') }}"
 sockd_bind_port_ipv6: 1080
-sockd_binary_install_dir: "/usr/local/bin"
 sockd_log_folder: "/var/log/sockd"
 sockd_config: "/etc/sockd.conf"
 sockd_workers: 8
