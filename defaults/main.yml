@@ -10,11 +10,11 @@ sockd_bind_ipv6_enabled: false
 sockd_bind_ipv6: "{{ ansible_default_ipv6.address | default('') }}"
 sockd_bind_port_ipv6: 1080
 sockd_binary_install_dir: "/usr/local/bin"
-sokcd_log_folder: "/var/log/sockd"
+sockd_log_folder: "/var/log/sockd"
 sockd_config: "/etc/sockd.conf"
 sockd_workers: 8
 sockd_vip: "{{ ansible_hostname }}.{{ ansible_domain }}"
-socks_contact_mail: "my@mail.com"
+sockd_contact_mail: "my@mail.com"
 sockd_firewalld_state: disabled
 sockd_access_rules: {}
 
