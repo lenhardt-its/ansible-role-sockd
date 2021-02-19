@@ -48,13 +48,16 @@
     state: present
   tags: sockd
 
-- name: generate log folder
+- name: generate log and pid folder
   file:
-    path: "{{ sokcd_log_folder }}"
+    path: "{{ item }}"
     owner: "{{ sockd_user }}"
     group: "{{ sockd_group }}"
     mode: 0755
     state: directory
+  with_items:
+    - "{{ sokcd_log_folder }}"
+    - "{{ sokcd_pid_folder }}"
   tags: sockd
 
 - name: generate config file
