@@ -1,10 +1,7 @@
 {{ ansible_managed | comment }}
-[Install]
-WantedBy=multi-user.target
-After=network-online.target
-
 [Unit]
 Description=Sockd Service
+After=network-online.target
 
 [Service]
 Type=forking
