@@ -131,7 +131,7 @@
 
 - name: allow binding to port in selinux
   seport:
-    ports: "{{ sockd_port }}"
+    ports: "{{ sockd_bind_port }}"
     proto: tcp
     setype: http_port_t
     state: present
@@ -143,7 +143,7 @@
 
 - name: allow access to port on firewalld
   firewalld:
-    port: "{{ sockd_port }}/tcp"
+    port: "{{ sockd_bind_port }}/tcp"
     permanent: yes
     state: true
   when: 
