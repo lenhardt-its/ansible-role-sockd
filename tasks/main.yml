@@ -64,7 +64,7 @@
     owner: "{{ sockd_user }}"
     group: "{{ sockd_group }}"
     mode: 0640
-  notify: restart sshsocks
+  notify: restart sockd
   tags: 
     - sockd
     - sockd_acls
