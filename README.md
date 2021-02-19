@@ -32,6 +32,8 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `sokcd_log_folder` | "/var/log/sockd"` | Default log dir |
 | `sokcd_pid_folder` | "/var/run/sockd"` | Default pid dir |
 | `sockd_config` | "/etc/sockd.conf" | Default config pat |
+| `sockd_logrotate_days` | 28 | Default logrotate days |
+| `sockd_workers` | 8 | Default num workers |
 | `sockd_vip` | "{{ ansible_hostname }}.{{ ansible_domain }}" | Default virtual (ip) service name for html config |
 | `socks_contact_mail` | "my@mail.com" | Default email-address for html config |
 | `sockd_firewalld_state` | disabled | Configure Firewalld |
