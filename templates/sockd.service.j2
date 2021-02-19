@@ -8,6 +8,7 @@ Wants=network-online.target
 Type=forking
 PIDFile={{ sockd_pid_folder }}/sockd.pid
 ExecStart=/usr/sbin/sockd -D -f {{ sockd_config }} -N {{ sockd_workers }} -p {{ sockd_pid_folder }}/sockd.pid
+ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=10
 
