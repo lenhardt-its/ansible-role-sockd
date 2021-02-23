@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {{ ansible_managed | comment }}
 {{ sockd_log_folder }}/*.log {
     daily
@@ -15,22 +14,3 @@
       /usr/bin/systemctl reload sockd 2>/dev/null
     endscript
 }
-||||||| constructed merge base
-=======
-{{ ansible_managed | comment }}
-/var/log/sockd/*.log {
-    daily
-    compress
-    delaycompress
-    rotate {{ sockd_logrotate_days }}
-    missingok
-    nocreate
-    create 0640 sockd sockd
-    dateext
-    dateformat _%Y%m%d
-    sharedscripts
-    postrotate
-      /usr/sbin/squid -k rotate 2>/dev/null
-    endscript
-}
->>>>>>> blub
