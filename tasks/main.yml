@@ -67,6 +67,7 @@
     owner: "{{ sockd_user }}"
     group: "{{ sockd_group }}"
     mode: 0640
+    validate: "/usr/sbin/sockd -V -f %s"
   notify: reload sockd
   tags:
     - sockd
