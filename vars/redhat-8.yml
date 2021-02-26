@@ -1,7 +1,4 @@
 ---
-sockd_selinux_packages:
+selinux_packages:
   - python3-libselinux
   - python3-policycoreutils
-sockd_config: /etc/sockd.conf
-sockd_systemd_unit: /usr/lib/systemd/system/sockd.service
-sockd_bin: sockd

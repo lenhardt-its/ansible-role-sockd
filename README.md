@@ -8,11 +8,16 @@ Only in destination ip is the subnetmask required. Not in source.
 
 ## Requirements
 
-- Ansible >= 3 (It might work on previous versions, but we cannot guarantee it)
+- Ansible >= 3
 - Community Packages
 ```
 ansible-galaxy collection install community.general
 ansible-galaxy collection install ansible.posix
+```
+
+After you have installed dante socks, you van use to following tag to only change the configuration and reload the service
+```
+ansible-playbook <playbook>.yml --tags sockd_acls
 ```
 
 ## Role Variables
@@ -24,11 +29,11 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `proxy_env` | {} | Set proxy environment variables | 
 | `sockd_user` | sockd | Run user |
 | `sockd_group` | sockd | Run group |
-| `sockd_bind_ip` | "{{ ansible_default_ipv4.address }}" | Default bind IP |
+| `sockd_bind_ip` | "0.0.0.0" | Default bind IP |
 | `sockd_bind_port` | 1080 | Default bind Port |
-| `sockd_bind_external_interface` | "{{ ansible_default_ipv4 }}" | Default bind Interface |
-| `sockd_bind_ipv6_enabled` | false | Enable/Disable ipv6 |
-| `sockd_bind_ipv6` | "{{ ansible_default_ipv6.address | default('') }}" | Default ipv6 bind IP |
+| `sockd_bind_external_interface` | "{{ ansible_default_ipv4.interface }}" | Default bind Interface |
+| `sockd_bind_ipv6_enabled` | true | Enable/Disable ipv6 |
+| `sockd_bind_ipv6` | "::" | Default ipv6 bind IP |
 | `sokcd_log_folder` | "/var/log/sockd"` | Default log dir |
 | `sokcd_pid_folder` | "/var/run/sockd"` | Default pid dir |
 | `sockd_logrotate_days` | 28 | Default logrotate days |

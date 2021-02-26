@@ -1,4 +1,8 @@
 {{ ansible_managed | comment }}
+# /etc/danted.conf
+# dante with authentication and ipv6 support
+# see: https://www.inet.no/dante/doc/1.4.x/config/ipv6.html
+
 # logging
 errorlog: syslog stderr {{ sockd_log_folder }}/error.log
 logoutput: syslog stdout {{ sockd_log_folder }}/access.log
@@ -7,11 +11,17 @@ debug: {{ sockd_debug }}
 {% endif %}
 
 # server address specification
+internal.protocol: ipv4 {% if sockd_bind_ipv6_enabled %}ipv6
+{% endif %}
+
+external.protocol: ipv4 {% if sockd_bind_ipv6_enabled %}ipv6
+{% endif %}
+
 internal: {{ sockd_bind_ip }} port = {{ sockd_bind_port }}
 {% if sockd_bind_ipv6_enabled %}
-# or IPv6
 internal: {{ sockd_bind_ipv6 }} port = {{ sockd_bind_port }}
 {% endif %}
+
 external: {{ sockd_bind_external_interface }}
 
 # server identities (not needed on solaris)
@@ -28,6 +38,7 @@ socksmethod: none
 #
 # Defined access rules
 #
+
 {% if sockd_access_rules is defined %}
 {%  for address in sockd_access_rules %}
 {{ address.name | comment }}
