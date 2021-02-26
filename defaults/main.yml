@@ -11,7 +11,7 @@ sockd_logrotate_days: 14
 sockd_workers: 2
 sockd_bind_ip: "0.0.0.0"
 sockd_bind_port: 1080
-sockd_bind_external_interface: "{{ ansible_default_ipv4 }}"
+sockd_bind_external_interface: "{{ ansible_default_ipv4.interface }}"
 sockd_bind_ipv6_enabled: false
 sockd_bind_ipv6: "{{ ansible_default_ipv6.address | default('') }}"
 sockd_log_folder: "/var/log/sockd"

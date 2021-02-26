@@ -18,13 +18,13 @@
 
 - import_tasks: firewall.yml
   become: true
-  when: "'Status: active' in ufw_status.stdout" or "'running' in firewalld_status.stdout"
+  when: ("'active' in ufw_status.stdout") or ("'running' in firewalld_status.stdout")
   tags: sockd
 
 - name: start and enable service
   systemd:
     daemon_reload: true
-    name: sockd
+    name: "{{ sockd_bin }}"
     enabled: true
     state: started
   become: true

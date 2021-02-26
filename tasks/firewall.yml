@@ -9,7 +9,7 @@
   notify: reload ufw
   become: true
   when:
-    - "'Status: active' in ufw_status.stdout"
+    - "'active' in ufw_status.stdout"
     - ansible_os_family == 'Debian'
 
 - name: configure firewalld

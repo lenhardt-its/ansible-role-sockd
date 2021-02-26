@@ -13,7 +13,7 @@
 - name: install client and server package for debian based systems
   ansible.builtin.apt:
     name:
-      - dante
+      - dante-client
       - dante-server
     state: present
     update_cache: yes

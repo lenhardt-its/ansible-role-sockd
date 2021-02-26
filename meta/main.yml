@@ -19,4 +19,6 @@ galaxy_info:
   galaxy_tags:
   - system
   - network
-dependencies: []
+dependencies:
+  - role: community.general
+  - role: ansible.posix

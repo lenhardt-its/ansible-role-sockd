@@ -12,6 +12,7 @@ Only in destination ip is the subnetmask required. Not in source.
 - Community Packages
 ```
 ansible-galaxy collection install community.general
+ansible-galaxy collection install ansible.posix
 ```
 
 ## Role Variables
