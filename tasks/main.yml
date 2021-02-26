@@ -1,96 +1,24 @@
 ---
-- name: gather operating system variables
-  include_vars: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
-    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
-    - "{{ ansible_distribution_file_variety | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
-    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
-    - "{{ ansible_distribution | lower }}.yml"
-    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_version.split('.')[0] }}.yml"
-    - "{{ ansible_os_family | lower }}.yml"
+- import_tasks: facts.yml
+  become: true
   tags: sockd
 
-- name: create system group
-  group:
-    name: "{{ sockd_group }}"
-    system: true
-    state: present
-  when: sockd_group != "root"
+- import_tasks: install.yml
+  become: true
   tags: sockd
 
-- name: create system user
-  user:
-    name: "{{ sockd_user }}"
-    system: true
-    shell: "/sbin/nologin"
-    group: "{{ sockd_group }}"
-  when: sockd_user != "root"
+- import_tasks: configure.yml
+  become: true
   tags: sockd
 
-- name: copy rpm files
-  copy:
-    src: "{{ role_path }}/files/{{ item }}"
-    dest: "/tmp/"
-    owner: root
-    group: root
-    mode: 0755
-  with_items:
-    - dante-1.4.2-1.21.x86_64.rpm
-    - dante-server-1.4.2-1.21.x86_64.rpm
+- import_tasks: selinux.yml
+  become: true
+  when: ansible_selinux.status == "enabled"
   tags: sockd
 
-- name: install client and server package
-  yum:
-    name:
-      - "/tmp/dante-1.4.2-1.21.x86_64.rpm"
-      - "/tmp/dante-server-1.4.2-1.21.x86_64.rpm"
-    state: present
-  tags: sockd
-
-- name: generate log and pid folder
-  file:
-    path: "{{ item }}"
-    owner: "{{ sockd_user }}"
-    group: "{{ sockd_group }}"
-    mode: 0755
-    state: directory
-  with_items:
-    - "{{ sockd_log_folder }}"
-    - "{{ sockd_pid_folder }}"
-  tags: sockd
-
-- name: generate config file
-  template:
-    src: "sockd.conf.j2"
-    dest: "{{ sockd_config }}"
-    owner: "{{ sockd_user }}"
-    group: "{{ sockd_group }}"
-    mode: 0640
-    validate: "/usr/sbin/sockd -V -f %s"
-  notify: reload sockd
-  tags:
-    - sockd
-    - sockd_acls
-
-- name: generate logrotate file
-  template:
-    src: "sockd_logrotate.conf.j2"
-    dest: "/etc/logrotate.d/sockd"
-    owner: "root"
-    group: "root"
-    mode: 0644
-  tags:
-    - sockd
-
-- name: copy systemd service unit
-  template:
-    src: sockd.service.j2
-    dest: "/usr/lib/systemd/system/sockd.service"
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart sockd
+- import_tasks: firewall.yml
+  become: true
+  when: "'Status: active' in ufw_status.stdout" or "'running' in firewalld_status.stdout"
   tags: sockd
 
 - name: start and enable service
@@ -99,69 +27,5 @@
     name: sockd
     enabled: true
     state: started
-  tags: sockd
-
-- name: caddy html config
-  template:
-    src: caddy_sockd.html.j2
-    dest: "{{ sockd_caddy_webserver_path }}/socks.html"
-    owner: "{{ sockd_caddy_user }}"
-    group: "{{ sockd_caddy_group }}"
-    mode: 0644
-  when: sockd_caddy_generate_html_output
-  tags:
-    - sockd
-    - sockd_acls
-
-- name: consul service config
-  template:
-    src: consul.service.json.j2
-    dest: "/etc/consul.d/{{ item.id }}.json"
-    owner: consul
-    group: consul
-    mode: 0644
-  with_items: "{{ consul_service_config }}"
-  when: sockd_consul_service_register
-  notify: reload consul
-  tags:
-    - sockd
-    - consul
-
-- name: install selinux dependencies
-  package:
-    name: "{{ item }}"
-    state: present
-  environment: "{{ proxy_env }}"
-  with_items: "{{ sockd_selinux_packages }}"
-  register: _install_packages
-  until: _install_packages is succeeded
-  retries: 5
-  delay: 2
-  when:
-    - ansible_os_family == 'RedHat'
-    - ansible_version.full is version_compare('2.4', '>=')
-    - ansible_selinux.status == "enabled"
-  tags: sockd
-
-- name: allow binding to port in selinux
-  seport:
-    ports: "{{ sockd_bind_port }}"
-    proto: tcp
-    setype: http_port_t
-    state: present
-  when:
-    - ansible_os_family == 'RedHat'
-    - ansible_version.full is version_compare('2.4', '>=')
-    - ansible_selinux.status == "enabled"
-  tags: sockd
-
-- name: allow access to port on firewalld
-  firewalld:
-    port: "{{ sockd_bind_port }}/tcp"
-    permanent: yes
-    state: true
-  when: 
-    - ansible_os_family == 'RedHat'
-    - sockd_firewalld_state == "enabled"
-  notify: reload firewalld
+  become: true
   tags: sockd

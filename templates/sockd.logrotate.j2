@@ -11,6 +11,6 @@
     dateformat _%Y%m%d
     sharedscripts
     postrotate
-      /usr/bin/systemctl reload sockd 2>/dev/null
+      /usr/bin/systemctl reload {{ sockd_bin }} 2>/dev/null
     endscript
 }

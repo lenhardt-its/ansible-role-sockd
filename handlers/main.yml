@@ -1,27 +1,31 @@
 ---
 - name: restart sockd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
-    name: sockd
+    name: "{{ sockd_bin }}"
     state: restarted
+  become: true
   tags: sockd
   
 - name: reload sockd
-  systemd:
-    name: sockd
+  ansible.builtin.systemd:
+    name: "{{ sockd_bin }}"
     state: reloaded
+  become: true
   tags: sockd
 
-- name: reload consul
-  systemd:
-    name: consul
+- name: reload ufw
+  ansible.builtin.systemd:
+    name: ufw
     state: reloaded
-  tags:
-    - sockd
-    - consul
+  when: ansible_os_family == 'Debian'
+  become: true
+  tags: sockd
 
 - name: reload firewalld
-  service:
+  ansible.builtin.systemd:
     name: firewalld
     state: reloaded
+  when: ansible_os_family == 'RedHat'
+  become: true
   tags: sockd

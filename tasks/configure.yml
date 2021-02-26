@@ -1,0 +1,79 @@
+---
+- name: generate system group
+  group:
+    name: "{{ sockd_group }}"
+    system: true
+    state: present
+  become: true
+  when: sockd_group != "root"
+  tags: sockd
+
+- name: generate system user
+  user:
+    name: "{{ sockd_user }}"
+    system: true
+    shell: "/sbin/nologin"
+    group: "{{ sockd_group }}"
+  become: true
+  when: sockd_user != "root"
+  tags: sockd
+
+- name: generate log and pid folder
+  file:
+    path: "{{ item }}"
+    owner: "{{ sockd_user }}"
+    group: "{{ sockd_group }}"
+    mode: 0755
+    state: directory
+  with_items:
+    - "{{ sockd_log_folder }}"
+    - "{{ sockd_pid_folder }}"
+  become: true
+  tags: sockd
+
+- name: generate config file
+  template:
+    src: "sockd.conf.j2"
+    dest: "{{ sockd_config }}"
+    owner: "{{ sockd_user }}"
+    group: "{{ sockd_group }}"
+    mode: 0640
+  notify: reload sockd
+  become: true
+  tags:
+    - sockd
+    - sockd_acls
+
+- name: generate config html
+  template:
+    src: sockd.html.j2
+    dest: "{{ sockd_html_path }}/socks.html"
+    owner: "www-data"
+    group: "www-data"
+    mode: 0644
+  when: sockd_html_output
+  become: true
+  tags:
+    - sockd
+    - sockd_acls
+
+- name: generate logrotate file
+  template:
+    src: "sockd.logrotate.j2"
+    dest: "/etc/logrotate.d/sockd"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  become: true
+  tags: sockd
+
+- name: generate systemd service unit
+  template:
+    src: sockd.service.j2
+    dest: "{{ sockd_systemd_unit }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart sockd
+  become: true
+  tags: sockd

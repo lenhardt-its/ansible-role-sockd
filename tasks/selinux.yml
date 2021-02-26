@@ -1,0 +1,29 @@
+---
+- name: install selinux dependencies
+  ansible.builtin.yum:
+    name: "{{ sockd_selinux_packages }}"
+    state: present
+  environment: "{{ proxy_env }}"
+  register: _install_packages
+  until: _install_packages is succeeded
+  retries: 5
+  delay: 2
+  become: true
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_version.full is version_compare('2.4', '>=')
+    - ansible_selinux.status == "enabled"
+  tags: sockd
+
+- name: allow binding to port in selinux
+  community.general.seport:
+    ports: "{{ sockd_bind_port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  become: true
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_version.full is version_compare('2.4', '>=')
+    - ansible_selinux.status == "enabled"
+  tags: sockd

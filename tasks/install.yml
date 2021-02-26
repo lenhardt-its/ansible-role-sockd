@@ -1,0 +1,23 @@
+---
+- name: install client and server package for redhat based systems
+  ansible.builtin.yum:
+    name:
+      - dante
+      - dante-server
+    state: present
+  environment: "{{ proxy_env }}"
+  become: true
+  when: ansible_os_family == 'RedHat'
+  tags: sockd
+
+- name: install client and server package for debian based systems
+  ansible.builtin.apt:
+    name:
+      - dante
+      - dante-server
+    state: present
+    update_cache: yes
+  environment: "{{ proxy_env }}"
+  become: true
+  when: ansible_os_family == 'Debian'
+  tags: sockd

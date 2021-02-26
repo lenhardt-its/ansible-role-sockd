@@ -1,0 +1,44 @@
+---
+- name: gather operating system variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution_file_variety | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_version.split('.')[0] }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+  tags: sockd
+
+- name: get systemd version
+  command: systemctl --version
+  changed_when: false
+  check_mode: false
+  register: __systemd_version
+  when: ansible_service_mgr == 'systemd'
+  tags: sockd
+
+- name: set systemd version fact
+  set_fact:
+    sockd_systemd_version: "{{ __systemd_version.stdout_lines[0].split(' ')[-1] }}"
+  when: ansible_service_mgr == 'systemd'
+  tags: sockd
+
+- name: check whether ufw status is active
+  shell: ufw status
+  changed_when: False
+  ignore_errors: True
+  register: ufw_status
+  become: true
+  when: ansible_os_family == 'Debian'
+  tags: sockd
+
+- name: check whether firewalld status is active
+  shell: firewall-cmd --state
+  changed_when: False
+  ignore_errors: True
+  register: firewalld_status
+  become: true
+  when: ansible_os_family == 'RedHat'
+  tags: sockd
