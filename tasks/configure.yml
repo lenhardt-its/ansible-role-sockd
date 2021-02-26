@@ -58,7 +58,7 @@
     - sockd_acls
 
 - name: generate logrotate file
-  template:
+  ansible.builtin.template:
     src: "sockd.logrotate.j2"
     dest: "/etc/logrotate.d/sockd"
     owner: "root"
@@ -68,7 +68,7 @@
   tags: sockd
 
 - name: generate systemd service unit
-  template:
+  ansible.builtin.template:
     src: sockd.service.j2
     dest: "{{ sockd_systemd_unit }}"
     owner: root
