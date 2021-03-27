@@ -10,10 +10,8 @@ Only in destination ip is the subnetmask required. Not in source.
 
 - Ansible >= 3
 - Community Packages
-```
-ansible-galaxy collection install community.general
-ansible-galaxy collection install ansible.posix
-```
+- `ansible-galaxy collection install community.general`
+- `ansible-galaxy collection install ansible.posix`
 
 After you have installed dante socks, you van use to following tag to only change the configuration and reload the service
 ```
@@ -51,7 +49,7 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 ---
 - hosts: all
   roles:
-  - onkeldom.ansible-role-socks
+  - onkeldom.sockd
   vars:
     sockd_access_rules:
       - name: "Allow any dst"

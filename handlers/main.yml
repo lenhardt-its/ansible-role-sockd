@@ -18,7 +18,6 @@
   ansible.builtin.systemd:
     name: ufw
     state: reloaded
-  when: ansible_os_family == 'Debian'
   become: true
   tags: sockd
 
@@ -26,6 +25,5 @@
   ansible.builtin.systemd:
     name: firewalld
     state: reloaded
-  when: ansible_os_family == 'RedHat'
   become: true
   tags: sockd
