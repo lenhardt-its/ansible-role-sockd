@@ -24,6 +24,7 @@ Only in destination ip is the subnetmask required. Not in source.
 - Community Packages
 - `ansible-galaxy collection install community.general`
 - `ansible-galaxy collection install ansible.posix`
+- `ansible-galaxy collection install onkeldom.caddyserver`
 
 After you have installed dante socks, you van use to following tag to only change the configuration and reload the service
 ```
