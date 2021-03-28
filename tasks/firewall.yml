@@ -6,6 +6,8 @@
     proto: tcp
     state: enabled
     comment: "Dante Socks5 Proxy"
+  changed_when: False
+  ignore_errors: True
   notify: reload ufw
   become: true
   when:
@@ -17,6 +19,8 @@
     port: "{{ sockd_bind_port }}/tcp"
     permanent: yes
     state: enabled
+  changed_when: False
+  ignore_errors: True
   notify: reload firewalld
   become: true
   when:
